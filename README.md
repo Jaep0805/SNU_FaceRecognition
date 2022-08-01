@@ -27,20 +27,24 @@ conda activate python37
 ```
 
 # Dataset 다운 주소
-다음 구글 드라이브 링크에서 부터 각 데이터셋 다운받아 /data 디렉토리에 압축해제
+다음 구글 드라이브 링크에서 부터 각 데이터셋 다운받아 /data 디렉토리에 압축해제  
 https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sharing
 
-데이터셋은 총 5개로 구성
-   학습 데이터셋 : MS1MV2, CASIA
-   Validation 데이터셋 : AgeDB, CFP, LFW
 
-압축 해제 이후 다음과 같은 폴더 형식을 갖는다
-|── data 
-   ├──> agedb_30 
-   ├──> cfp_align_112
-   ├──> imgs_casia 
-   ├──> imgs_train 
-   └──> lfw_align_112
+데이터셋은 총 5개로 구성\
+  1.학습 데이터셋 : MS1MV2, CASIA\
+  2.Validation 데이터셋 : AgeDB, CFP, LFW
+
+
+압축 해제 이후 다음과 같은 폴더 형식을 갖는다\
+
+    |── data \
+        ├──> agedb_30 \
+        ├──> cfp_align_112\
+        ├──> imgs_casia \
+        ├──> imgs_train \
+        └──> lfw_align_112
+
 
 # Directory 설명
     |── applications
@@ -80,7 +84,7 @@ https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sha
 학습용 코드 - train.py
 
 ### 1) dataset 준비
-   위 dataset 다운 주소에서 각 dataset 압축파일을 다운받아 /data/ 폴더에 AgeDB, cfp_align_112, imgs_casia, lfw_align_112폴더 생성
+   위 dataset 다운 주소에서 각 dataset 압축파일을 다운받아 /data/ 폴더에 AgeDB, cfp_align_112, imgs_casia, lfw_align_112폴더 생성\
    https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sharing
 
 ### 2) 실행
@@ -88,17 +92,20 @@ https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sha
    아래 명령어를 통해 실행한다
    
    python train.py --gpu_num={[사용할 gpu들의 index]}
-     EX. python train.py --gpu_num=[0,1] 
+
+      EX. python train.py --gpu_num=[0,1] 
    
-   기본 epoch는 50, batch size는 64으로 되어있으며, 변경하고 싶을 시 아래와 같이 추가한다
+   기본 epoch는 50, batch size는 64으로 되어있으며, 변경하고 싶을 시 아래와 같이 추가한다\
    python train.py --gpu_num={[사용할 gpu들의 index]} --epochs={epoch_num} --batch_size={batch_size}
    
-   추가적으로 기존 학습 데이터의 Low-resolution버전으로 모델을 학습할 수 있다.
-   기존 학습 데이터는 112x112 크기를 가진다.
+
+   추가적으로 기존 학습 데이터의 Low-resolution버전으로 모델을 학습할 수 있다.\
+   기존 학습 데이터는 112x112 크기를 가진다.\
    LR_train를 True로 추가해주고 원하는 LR_scale을 argument로 주면된다
 
-   python train.py --gpu_num={[사용할 gpu들의 index]} --epochs={epoch_num} --batch_size={batch_size} --LR_train={True/False} --LR_scale{LR scale int}
-     EX. python train.py --gpu_num=[0,1] --epochs=100 --batch_size=32 --LR_train=True --LR_scale=2 
+   python train.py --gpu_num={[사용할 gpu들의 index]} --epochs={epoch_num} --batch_size={batch_size} --LR_train={True/False} --LR_scale={LR scale int}
+
+      EX. python train.py --gpu_num=[0,1] --epochs=100 --batch_size=32 --LR_train=True --LR_scale=2 
 
 
 ### 3) 결과 저장
