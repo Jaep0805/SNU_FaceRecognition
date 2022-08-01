@@ -132,7 +132,7 @@ https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sha
 argument로 --resume_dir을 지정해주어 validation을 진행한다
 
 구글 드라이브 주소 : 
-https://drive.google.com/file/d/1dm03XeMz2HdpPbCQ-yRePlDTIpW4kDyI/view?usp=sharing
+https://drive.google.com/drive/folders/1LSqIi5azx6rp2QAvIiK3T1Nc3ElaJuB2?usp=sharing
 
 ## === Validation ===
 
