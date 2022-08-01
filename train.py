@@ -99,7 +99,7 @@ if __name__ == '__main__':
         ])
     
     # train dataset root setting
-    dataset_train = datasets.ImageFolder(os.path.join(DATA_ROOT, 'imgs_train'), train_transform)
+    dataset_train = datasets.ImageFolder(os.path.join(DATA_ROOT, 'imgs_casia'), train_transform)
 
     # create a weighted random sampler to process imbalanced data
     weights = make_weights_for_balanced_classes(dataset_train.imgs, len(dataset_train.classes))

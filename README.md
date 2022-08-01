@@ -42,7 +42,7 @@ https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sha
         ├──> agedb_30 \
         ├──> cfp_align_112\
         ├──> imgs_casia \
-        ├──> imgs_train \
+        ├──> ms1m_align_112 \
         └──> lfw_align_112
 
 
@@ -132,7 +132,7 @@ https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sha
 argument로 --resume_dir을 지정해주어 validation을 진행한다
 
 구글 드라이브 주소 : 
-
+https://drive.google.com/file/d/1dm03XeMz2HdpPbCQ-yRePlDTIpW4kDyI/view?usp=sharing
 
 ## === Validation ===
 
