@@ -150,8 +150,8 @@ https://drive.google.com/file/d/1dm03XeMz2HdpPbCQ-yRePlDTIpW4kDyI/view?usp=shari
    
    따로 resume_dir을 지정해주지않으면 checkpoints_best안에 있는 제일 최근 checkpoint 폴더로 validation이 진행된다.
    
-   추가적으로 LR, SR argument를 줄 수 있다
-   Validation dataset의 LR버전에 대한 validation결과를 보고싶다면 --LR_eval=True
+   추가적으로 LR, SR argument를 줄 수 있다\
+   Validation dataset의 LR버전에 대한 validation결과를 보고싶다면 --LR_eval=True\
    LR버전의 Validation dataset의 Super Resolution한 이미지들에 대한 결과를 보고싶다면 --SR_eval=True
 
       EX. python validation.py --gpu_num=[0,1] --resume_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-28-19-15" --LR_eval=True --SR_eval=True
