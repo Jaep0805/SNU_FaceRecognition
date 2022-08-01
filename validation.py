@@ -20,6 +20,16 @@ import random
 
 from tqdm import tqdm
 
+#make directories
+if not os.path.exists("./checkpoints"):
+    os.makedirs("./checkpoints")
+if not os.path.exists("./checkpoints_best"):
+    os.makedirs("./checkpoints_best")
+if not os.path.exists("./log"):
+    os.makedirs("./log")
+if not os.path.exists("./data"):
+    os.makedirs("./data")
+
 if __name__ == '__main__':
     args = parse_args()
 
