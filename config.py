@@ -16,26 +16,23 @@ def parse_training_args(parser):
     #                     help='Use Multi-GPU')
 
     #Directory parameters
-    parser.add_argument('--data_dir', type=str, default="/data/parkjun210/Jae_Detect_Recog/Code_face_recog/data",
+    parser.add_argument('--data_dir', type=str, default="/data/parkjun210/Code_face_recog_*/data",
                         help='data directory')
 
-    parser.add_argument('--checkpoint_dir', type=str, default="/data/parkjun210/Jae_Detect_Recog/Code_face_recog/checkpoints",
+    parser.add_argument('--checkpoint_dir', type=str, default="/data/parkjun210/Code_face_recog_*/checkpoints",
                         help='checkpoint directory for saving')
     
-    parser.add_argument('--best_checkpoint_dir', type=str, default="/data/parkjun210/Jae_Detect_Recog/Code_face_recog/checkpoints_best",
+    parser.add_argument('--best_checkpoint_dir', type=str, default="/data/parkjun210/Code_face_recog_*/checkpoints_best",
                         help='best checkpoint directory for saving best models')
 
-    parser.add_argument('--log_dir', type=str, default="/data/parkjun210/Jae_Detect_Recog/Code_face_recog/log",
-                        help='')
-
-    parser.add_argument('--backbone_dir', type=str, default="/data/parkjun210/Jae_Detect_Recog/Code_face_recog/checkpoints_best/Backbone_IR_SE_50_LRTRAIN_False_LRx4_checkpoint.pth",
-                        help='')
-
-    parser.add_argument('--head_dir', type=str, default="./",
+    parser.add_argument('--log_dir', type=str, default="/data/parkjun210/Code_face_recog_*/log",
                         help='')
     
-    parser.add_argument('--resume_dir', type=str, default="/data/parkjun210/Jae_Detect_Recog/Code_face_recog/checkpoints_best/",
-                        help='resume checkpoint directory for loading')
+    parser.add_argument('--load_dir', type=str, default="/data/parkjun210/Code_face_recog_*/checkpoints_best/",
+                        help='load checkpoint directory for validation') #for validation
+
+    parser.add_argument('--resume_dir', type=str, default="",
+                        help='resume checkpoint directory for training') #for resume training
 
     # Train parameters
 

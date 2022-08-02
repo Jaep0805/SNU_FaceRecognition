@@ -46,8 +46,7 @@ if __name__ == '__main__':
     LOG_ROOT = args.log_dir # the root to log your train/val status
     CHECKPOINT_BEST_ROOT = args.best_checkpoint_dir
     RESUME_ROOT = args.resume_dir
-    BACKBONE_RESUME_ROOT = args.backbone_dir # the root to resume training from a saved checkpoint
-    HEAD_RESUME_ROOT = args.head_dir  # the root to resume training from a saved checkpoint
+    LOAD_ROOT = args.load_dir
 
     #Train parameters
     BATCH_SIZE = args.batch_size
@@ -93,18 +92,18 @@ if __name__ == '__main__':
     #Load checkpoint
     print("=" * 60)
     subdirlist = []
-    if RESUME_ROOT == "/data/parkjun210/Jae_Detect_Recog/Code_face_recog/checkpoints_best/":
-        for subdir, dirs, files in os.walk(RESUME_ROOT):
+    if LOAD_ROOT == "/data/parkjun210/Code_face_recog_*/checkpoints_best/":
+        for subdir, dirs, files in os.walk(LOAD_ROOT):
             subdirlist.append(subdir)
         subdirlist = subdirlist[1:]
         subdirlist.sort()
-        RESUME_ROOT = subdirlist[-1]
-    for subdir, dirs, files in os.walk(RESUME_ROOT):
-        for file in files:
-            if file.startswith("Backbone"):
-                BACKBONE_RESUME_ROOT = os.path.join(RESUME_ROOT, file)
-                print("Loading Backbone Checkpoint '{}'".format(BACKBONE_RESUME_ROOT))
-                BACKBONE.load_state_dict(torch.load(BACKBONE_RESUME_ROOT))
+        LOAD_ROOT = subdirlist[-1]
+    else :
+        for filename in os.listdir(LOAD_ROOT):
+            if filename.startswith("Backbone"):
+                BACKBONE_LOAD_ROOT = os.path.join(LOAD_ROOT, filename)
+                print("Loading Backbone Checkpoint '{}'".format(BACKBONE_LOAD_ROOT))
+                BACKBONE.load_state_dict(torch.load(BACKBONE_LOAD_ROOT))
 
     if MULTI_GPU:
         # multi-GPU setting

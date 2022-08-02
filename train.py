@@ -28,7 +28,7 @@ if not os.path.exists("./log"):
     os.makedirs("./log")
 if not os.path.exists("./data"):
     os.makedirs("./data")
-
+    
 if __name__ == '__main__':
     args = parse_args()
 
@@ -44,13 +44,12 @@ if __name__ == '__main__':
     CHECKPOINT_ROOT = args.checkpoint_dir # the root to buffer your checkpoints
     LOG_ROOT = args.log_dir # the root to log your train/val status
     CHECKPOINT_BEST_ROOT = args.best_checkpoint_dir
-    # BACKBONE_RESUME_ROOT = args.backbone_dir # the root to resume training from a saved checkpoint
-    # HEAD_RESUME_ROOT = args.head_dir  # the root to resume training from a saved checkpoint
     RESUME_ROOT = args.resume_dir
 
     #Train parameters
     BATCH_SIZE = args.batch_size
     NUM_EPOCH = args.epochs
+
     #further configurable
     INPUT_SIZE = [112, 112] # support: [112, 112] and [224, 224]
     RGB_MEAN = [0.5, 0.5, 0.5] # for normalize inputs to [-1, 1]
@@ -108,7 +107,7 @@ if __name__ == '__main__':
         ])
     
     # train dataset root setting
-    dataset_train = datasets.ImageFolder(os.path.join(DATA_ROOT, 'imgs_casia'), train_transform)
+    dataset_train = datasets.ImageFolder(os.path.join(DATA_ROOT, 'imgs'), train_transform)
 
     # create a weighted random sampler to process imbalanced data
     weights = make_weights_for_balanced_classes(dataset_train.imgs, len(dataset_train.classes))
@@ -148,22 +147,15 @@ if __name__ == '__main__':
     # optionally resume from a checkpoint
     print("=" * 60)
     subdirlist = []
-    if RESUME_ROOT == "/data/parkjun210/Jae_Detect_Recog/Code_face_recog/checkpoints_best/":
-        for subdir, dirs, files in os.walk(RESUME_ROOT):
-            subdirlist.append(subdir)
-        subdirlist = subdirlist[1:]
-        subdirlist.sort()
-        RESUME_ROOT = subdirlist[-1]
-    for subdir, dirs, files in os.walk(RESUME_ROOT):
-        for file in files:
-            if file.startswith("Backbone"):
-                BACKBONE_RESUME_ROOT = os.path.join(RESUME_ROOT, file)
-                print("Loading Backbone Checkpoint '{}'".format(BACKBONE_RESUME_ROOT))
-                BACKBONE.load_state_dict(torch.load(BACKBONE_RESUME_ROOT))
-            if file.startswith("Head"):
-                HEAD_RESUME_ROOT = os.path.join(RESUME_ROOT, file)
-                print("Loading Head Checkpoint '{}'".format(HEAD_RESUME_ROOT))
-                HEAD.load_state_dict(torch.load(HEAD_RESUME_ROOT))
+    for filename in os.listdir(RESUME_ROOT):
+        if filename.startswith("Backbone"):
+            BACKBONE_RESUME_ROOT = os.path.join(RESUME_ROOT, filename)
+            print("Loading Backbone Checkpoint '{}'".format(BACKBONE_RESUME_ROOT))
+            BACKBONE.load_state_dict(torch.load(BACKBONE_RESUME_ROOT))
+        if filename.startswith("Head"):
+            HEAD_RESUME_ROOT = os.path.join(RESUME_ROOT, filename)
+            print("Loading Head Checkpoint '{}'".format(HEAD_RESUME_ROOT))
+            HEAD.load_state_dict(torch.load(HEAD_RESUME_ROOT))
 
     if MULTI_GPU:
         # multi-GPU setting
