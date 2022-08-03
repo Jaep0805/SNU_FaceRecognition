@@ -29,6 +29,8 @@ if not os.path.exists("./log"):
     os.makedirs("./log")
 if not os.path.exists("./data"):
     os.makedirs("./data")
+if not os.path.exists("./SR/checkpoint"):
+    os.makedirs("./SR/checkpoint")
 
 if __name__ == '__main__':
     args = parse_args()
@@ -47,6 +49,7 @@ if __name__ == '__main__':
     CHECKPOINT_BEST_ROOT = args.best_checkpoint_dir
     RESUME_ROOT = args.resume_dir
     LOAD_ROOT = args.load_dir
+    SR_CHECKPOINT_ROOT = args.sr_checkpoint_dir
 
     #Train parameters
     BATCH_SIZE = args.batch_size
@@ -92,7 +95,7 @@ if __name__ == '__main__':
     #Load checkpoint
     print("=" * 60)
     subdirlist = []
-    if LOAD_ROOT == "/data/parkjun210/Code_face_recog_*/checkpoints_best/":
+    if LOAD_ROOT == "./checkpoints_best/":
         for subdir, dirs, files in os.walk(LOAD_ROOT):
             subdirlist.append(subdir)
         subdirlist = subdirlist[1:]
@@ -122,27 +125,16 @@ if __name__ == '__main__':
     print("=" * 60)
 
     if SR_EVAL:
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--arch', type=str, default='RCAN')
-        parser.add_argument('--weights_path', type=str, default='/data/parkjun210/ArcFace/RCAN-pytorch/output/RCAN_epoch_19.pth')
-        parser.add_argument('--image_path', type=str, default='/data/parkjun210/ArcFace/FSRCNN-PyTorch/eval_data')
-        parser.add_argument('--outputs_dir', type=str, default='/data/parkjun210/ArcFace/RCAN-pytorch/eval_output')
-        parser.add_argument('--scale', type=int, default=8)
-        parser.add_argument('--num_features', type=int, default=64)
-        parser.add_argument('--num_rg', type=int, default=10)
-        parser.add_argument('--num_rcab', type=int, default=20)
-        parser.add_argument('--reduction', type=int, default=16)
-        opt = parser.parse_args()
-
-        sr_model = RCAN(opt).to(DEVICE)
-        checkpoint = torch.load('/data/parkjun210/ArcFace/RCAN-pytorch/output/scale_x8_pretrain_x2/RCAN_epoch_20_best.pth')
-        sr_model.load_state_dict(checkpoint)
-
-        print("Perform SR Evaluation on LFW, CFP_FF, CFP_FP and AgeDB")
-        accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL, sr_model)
-        accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_ff, cfp_ff_issame, LR_EVAL, sr_model)
-        accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_fp, cfp_fp_issame, LR_EVAL, sr_model)
-        accuracy_agedb, best_threshold_agedb, roc_curve_agedb = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, agedb, agedb_issame, LR_EVAL, sr_model)
+        sr_model = RCAN().to(DEVICE)
+        if os.path.isfile(SR_CHECKPOINT_ROOT):
+            sr_model.load_state_dict(SR_CHECKPOINT_ROOT)
+            print("Perform SR Evaluation on LFW, CFP_FF, CFP_FP and AgeDB")
+            accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL, sr_model)
+            accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_ff, cfp_ff_issame, LR_EVAL, sr_model)
+            accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_fp, cfp_fp_issame, LR_EVAL, sr_model)
+            accuracy_agedb, best_threshold_agedb, roc_curve_agedb = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, agedb, agedb_issame, LR_EVAL, sr_model)
+        else :
+            print("No checkpoint exists")
     else:
         print("Perform Evaluation on LFW, CFP_FF, CFP_FP and AgeDB")
         accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL)

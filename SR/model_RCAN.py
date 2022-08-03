@@ -41,15 +41,14 @@ class RG(nn.Module):
     def forward(self, x):
         return x + self.module(x)
 
-
 class RCAN(nn.Module):
-    def __init__(self, args):
+    def __init__(self, scale = 8, num_features = 64, num_rg = 10, num_rcab = 20, reduction = 16):
         super(RCAN, self).__init__()
-        scale = args.scale
-        num_features = args.num_features
-        num_rg = args.num_rg
-        num_rcab = args.num_rcab
-        reduction = args.reduction
+        scale = scale
+        num_features = num_features
+        num_rg = num_rg
+        num_rcab = num_rcab
+        reduction = reduction
 
         self.sf = nn.Conv2d(3, num_features, kernel_size=3, padding=1)
         self.rgs = nn.Sequential(*[RG(num_features, num_rcab, reduction) for _ in range(num_rg)])

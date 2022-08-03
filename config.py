@@ -16,19 +16,22 @@ def parse_training_args(parser):
     #                     help='Use Multi-GPU')
 
     #Directory parameters
-    parser.add_argument('--data_dir', type=str, default="/data/parkjun210/Code_face_recog_*/data",
+    parser.add_argument('--data_dir', type=str, default="./data",
                         help='data directory')
 
-    parser.add_argument('--checkpoint_dir', type=str, default="/data/parkjun210/Code_face_recog_*/checkpoints",
+    parser.add_argument('--checkpoint_dir', type=str, default="./checkpoints",
                         help='checkpoint directory for saving')
     
-    parser.add_argument('--best_checkpoint_dir', type=str, default="/data/parkjun210/Code_face_recog_*/checkpoints_best",
+    parser.add_argument('--best_checkpoint_dir', type=str, default="./checkpoints_best",
                         help='best checkpoint directory for saving best models')
 
-    parser.add_argument('--log_dir', type=str, default="/data/parkjun210/Code_face_recog_*/log",
+    parser.add_argument('--sr_checkpoint_dir', type=str, default="",
+                        help='checkpoint for sr module, must be specified if SR_EVAL is true')    
+
+    parser.add_argument('--log_dir', type=str, default="./log",
                         help='')
     
-    parser.add_argument('--load_dir', type=str, default="/data/parkjun210/Code_face_recog_*/checkpoints_best/",
+    parser.add_argument('--load_dir', type=str, default="./checkpoints_best/",
                         help='load checkpoint directory for validation') #for validation
 
     parser.add_argument('--resume_dir', type=str, default="",

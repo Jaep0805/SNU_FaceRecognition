@@ -28,7 +28,9 @@ if not os.path.exists("./log"):
     os.makedirs("./log")
 if not os.path.exists("./data"):
     os.makedirs("./data")
-    
+if not os.path.exists("./SR/checkpoint"):
+    os.makedirs("./SR/checkpoint")
+        
 if __name__ == '__main__':
     args = parse_args()
 
@@ -147,15 +149,16 @@ if __name__ == '__main__':
     # optionally resume from a checkpoint
     print("=" * 60)
     subdirlist = []
-    for filename in os.listdir(RESUME_ROOT):
-        if filename.startswith("Backbone"):
-            BACKBONE_RESUME_ROOT = os.path.join(RESUME_ROOT, filename)
-            print("Loading Backbone Checkpoint '{}'".format(BACKBONE_RESUME_ROOT))
-            BACKBONE.load_state_dict(torch.load(BACKBONE_RESUME_ROOT))
-        if filename.startswith("Head"):
-            HEAD_RESUME_ROOT = os.path.join(RESUME_ROOT, filename)
-            print("Loading Head Checkpoint '{}'".format(HEAD_RESUME_ROOT))
-            HEAD.load_state_dict(torch.load(HEAD_RESUME_ROOT))
+    if RESUME_ROOT != "":
+        for filename in os.listdir(RESUME_ROOT):
+            if filename.startswith("Backbone"):
+                BACKBONE_RESUME_ROOT = os.path.join(RESUME_ROOT, filename)
+                print("Loading Backbone Checkpoint '{}'".format(BACKBONE_RESUME_ROOT))
+                BACKBONE.load_state_dict(torch.load(BACKBONE_RESUME_ROOT))
+            if filename.startswith("Head"):
+                HEAD_RESUME_ROOT = os.path.join(RESUME_ROOT, filename)
+                print("Loading Head Checkpoint '{}'".format(HEAD_RESUME_ROOT))
+                HEAD.load_state_dict(torch.load(HEAD_RESUME_ROOT))
 
     if MULTI_GPU:
         # multi-GPU setting
