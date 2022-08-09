@@ -91,21 +91,21 @@ https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sha
 
    아래 명령어를 통해 실행한다
    
-   python train.py --gpu_num={[사용할 gpu들의 index]}
+   python train.py --gpu_num={사용할 gpu의 index}
 
-      EX. python train.py --gpu_num=[0,1] 
+      EX. python train.py --gpu_num=0
    
    기본 epoch는 50, batch size는 64으로 되어있으며, 변경하고 싶을 시 아래와 같이 추가한다\
-   python train.py --gpu_num={[사용할 gpu들의 index]} --epochs={epoch_num} --batch_size={batch_size}
+   python train.py --gpu_num={사용할 gpu의 index} --epochs={epoch_num} --batch_size={batch_size}
    
 
    추가적으로 기존 학습 데이터의 Low-resolution버전으로 모델을 학습할 수 있다.\
    기존 학습 데이터는 112x112 크기를 가진다.\
    LR_train를 True로 추가해주고 원하는 LR_scale을 argument로 주면된다
 
-   python train.py --gpu_num={[사용할 gpu들의 index]} --epochs={epoch_num} --batch_size={batch_size} --LR_train={True/False} --LR_scale={LR scale int}
+   python train.py --gpu_num={사용할 gpu의 index} --epochs={epoch_num} --batch_size={batch_size} --LR_train={True/False} --LR_scale={LR scale int}
 
-      EX. python train.py --gpu_num=[0,1] --epochs=100 --batch_size=32 --LR_train=True --LR_scale=2 
+      EX. python train.py --gpu_num=0 --epochs=100 --batch_size=32 --LR_train=True --LR_scale=2 
 
 
 ### 3) 결과 저장
@@ -138,13 +138,13 @@ https://drive.google.com/drive/folders/1LSqIi5azx6rp2QAvIiK3T1Nc3ElaJuB2?usp=sha
 
 학습한 checkpoint를 validation데이터셋(CFP, LFW, AgeDB)에 대해 validation진행한다
 
-      EX. python validation.py --gpu_num=[0,1] --load_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-28-19-15"
+      EX. python validation.py --gpu_num=0 --load_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-28-19-15"
       
    추가적으로 LR, SR argument를 줄 수 있다\
    Validation dataset의 LR버전에 대한 validation결과를 보고싶다면 --LR_eval=True\
    LR버전의 Validation dataset의 Super Resolution한 이미지들에 대한 결과를 보고싶다면 --SR_eval=True
 
-      EX. python validation.py --gpu_num=[0,1] --load_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-2434-19-15" --LR_eval=True --SR_eval=True
+      EX. python validation.py --gpu_num=0 --load_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-2434-19-15" --LR_eval=True --SR_eval=True
 
 ### 3) 결과
    결과는 아래와 같이 각 Validation 데이터셋에 대한 결과와

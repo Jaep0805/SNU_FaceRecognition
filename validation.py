@@ -88,12 +88,11 @@ if __name__ == '__main__':
         subdirlist = subdirlist[1:]
         subdirlist.sort()
         LOAD_ROOT = subdirlist[-1]
-    else :
-        for filename in os.listdir(LOAD_ROOT):
-            if filename.startswith("Backbone"):
-                BACKBONE_LOAD_ROOT = os.path.join(LOAD_ROOT, filename)
-                print("Loading Backbone Checkpoint '{}'".format(BACKBONE_LOAD_ROOT))
-                BACKBONE.load_state_dict(torch.load(BACKBONE_LOAD_ROOT))
+    for filename in os.listdir(LOAD_ROOT):
+        if filename.startswith("Backbone"):
+            BACKBONE_LOAD_ROOT = os.path.join(LOAD_ROOT, filename)
+            print("Loading Backbone Checkpoint '{}'".format(BACKBONE_LOAD_ROOT))
+            BACKBONE.load_state_dict(torch.load(BACKBONE_LOAD_ROOT))
 
 
     BACKBONE = BACKBONE.to(DEVICE)
