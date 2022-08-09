@@ -20,17 +20,6 @@ import random
 
 from tqdm import tqdm
 
-#make directories
-if not os.path.exists("./checkpoints"):
-    os.makedirs("./checkpoints")
-if not os.path.exists("./checkpoints_best"):
-    os.makedirs("./checkpoints_best")
-if not os.path.exists("./log"):
-    os.makedirs("./log")
-if not os.path.exists("./data"):
-    os.makedirs("./data")
-if not os.path.exists("./SR/checkpoint"):
-    os.makedirs("./SR/checkpoint")
 
 if __name__ == '__main__':
     args = parse_args()
@@ -38,7 +27,6 @@ if __name__ == '__main__':
     #Session parameters
     SEED = args.seed
     GPU_ID = args.gpu_num
-    MULTI_GPU = len(GPU_ID) != 1
     PIN_MEMORY = True
     NUM_WORKERS = 8
 
@@ -80,7 +68,6 @@ if __name__ == '__main__':
     # random seed for reproduce results
     torch.manual_seed(SEED)
     torch.cuda.manual_seed(SEED)
-    torch.cuda.manual_seed_all(SEED)  # if use multi-GPU
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     np.random.seed(SEED)
@@ -108,13 +95,8 @@ if __name__ == '__main__':
                 print("Loading Backbone Checkpoint '{}'".format(BACKBONE_LOAD_ROOT))
                 BACKBONE.load_state_dict(torch.load(BACKBONE_LOAD_ROOT))
 
-    if MULTI_GPU:
-        # multi-GPU setting
-        BACKBONE = nn.DataParallel(BACKBONE, device_ids = GPU_ID)
-        BACKBONE = BACKBONE.to(DEVICE)
-    else:
-        # single-GPU setting
-        BACKBONE = BACKBONE.to(DEVICE)
+
+    BACKBONE = BACKBONE.to(DEVICE)
 
     
 
@@ -129,18 +111,18 @@ if __name__ == '__main__':
         if os.path.isfile(SR_CHECKPOINT_ROOT):
             sr_model.load_state_dict(SR_CHECKPOINT_ROOT)
             print("Perform SR Evaluation on LFW, CFP_FF, CFP_FP and AgeDB")
-            accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL, sr_model)
-            accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_ff, cfp_ff_issame, LR_EVAL, sr_model)
-            accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_fp, cfp_fp_issame, LR_EVAL, sr_model)
-            accuracy_agedb, best_threshold_agedb, roc_curve_agedb = perform_val_sr(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, agedb, agedb_issame, LR_EVAL, sr_model)
+            accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val_sr(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL, sr_model)
+            accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff = perform_val_sr(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_ff, cfp_ff_issame, LR_EVAL, sr_model)
+            accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp = perform_val_sr(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_fp, cfp_fp_issame, LR_EVAL, sr_model)
+            accuracy_agedb, best_threshold_agedb, roc_curve_agedb = perform_val_sr(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, agedb, agedb_issame, LR_EVAL, sr_model)
         else :
             print("No checkpoint exists")
     else:
         print("Perform Evaluation on LFW, CFP_FF, CFP_FP and AgeDB")
-        accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL)
-        accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_ff, cfp_ff_issame, LR_EVAL)
-        accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_fp, cfp_fp_issame, LR_EVAL)
-        accuracy_agedb, best_threshold_agedb, roc_curve_agedb = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, agedb, agedb_issame, LR_EVAL)
+        accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL)
+        accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff = perform_val(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_ff, cfp_ff_issame, LR_EVAL)
+        accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp = perform_val(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_fp, cfp_fp_issame, LR_EVAL)
+        accuracy_agedb, best_threshold_agedb, roc_curve_agedb = perform_val(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, agedb, agedb_issame, LR_EVAL)
 
 
     avg = (accuracy_lfw + accuracy_cfp_ff + accuracy_cfp_fp + accuracy_agedb) / 4

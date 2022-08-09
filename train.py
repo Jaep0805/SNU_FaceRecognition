@@ -19,25 +19,12 @@ from tqdm import tqdm
 
 import re
 
-#make directories
-if not os.path.exists("./checkpoints"):
-    os.makedirs("./checkpoints")
-if not os.path.exists("./checkpoints_best"):
-    os.makedirs("./checkpoints_best")
-if not os.path.exists("./log"):
-    os.makedirs("./log")
-if not os.path.exists("./data"):
-    os.makedirs("./data")
-if not os.path.exists("./SR/checkpoint"):
-    os.makedirs("./SR/checkpoint")
-        
 if __name__ == '__main__':
     args = parse_args()
 
     #Session parameters
     SEED = args.seed
     GPU_ID = args.gpu_num
-    MULTI_GPU = len(GPU_ID) != 1
     PIN_MEMORY = True
     NUM_WORKERS = 8
 
@@ -78,7 +65,6 @@ if __name__ == '__main__':
     # random seed for reproduce results
     torch.manual_seed(SEED)
     torch.cuda.manual_seed(SEED)
-    torch.cuda.manual_seed_all(SEED)  # if use multi-GPU
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     np.random.seed(SEED)
@@ -160,13 +146,7 @@ if __name__ == '__main__':
                 print("Loading Head Checkpoint '{}'".format(HEAD_RESUME_ROOT))
                 HEAD.load_state_dict(torch.load(HEAD_RESUME_ROOT))
 
-    if MULTI_GPU:
-        # multi-GPU setting
-        BACKBONE = nn.DataParallel(BACKBONE, device_ids = GPU_ID)
-        BACKBONE = BACKBONE.to(DEVICE)
-    else:
-        # single-GPU setting
-        BACKBONE = BACKBONE.to(DEVICE)
+    BACKBONE = BACKBONE.to(DEVICE)
 
 
     #======= train & validation & save checkpoint =======#
@@ -264,13 +244,13 @@ if __name__ == '__main__':
         # validation statistics per epoch (buffer for visualization)
         print("=" * 60)
         print("Perform Evaluation on LFW, CFP_FF, CFP_FP and AgeDB")
-        accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL)
+        accuracy_lfw, best_threshold_lfw, roc_curve_lfw = perform_val(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, lfw, lfw_issame, LR_EVAL)
         buffer_val(writer, "LFW", accuracy_lfw, best_threshold_lfw, roc_curve_lfw, epoch + 1)
-        accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_ff, cfp_ff_issame, LR_EVAL)
+        accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff = perform_val(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_ff, cfp_ff_issame, LR_EVAL)
         buffer_val(writer, "CFP_FF", accuracy_cfp_ff, best_threshold_cfp_ff, roc_curve_cfp_ff, epoch + 1)
-        accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_fp, cfp_fp_issame, LR_EVAL)
+        accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp = perform_val(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, cfp_fp, cfp_fp_issame, LR_EVAL)
         buffer_val(writer, "CFP_FP", accuracy_cfp_fp, best_threshold_cfp_fp, roc_curve_cfp_fp, epoch + 1)
-        accuracy_agedb, best_threshold_agedb, roc_curve_agedb = perform_val(MULTI_GPU, DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, agedb, agedb_issame, LR_EVAL)
+        accuracy_agedb, best_threshold_agedb, roc_curve_agedb = perform_val(DEVICE, EMBEDDING_SIZE, BATCH_SIZE, BACKBONE, agedb, agedb_issame, LR_EVAL)
         buffer_val(writer, "AgeDB", accuracy_agedb, best_threshold_agedb, roc_curve_agedb, epoch + 1)
         
         avg = (accuracy_lfw + accuracy_cfp_ff + accuracy_cfp_fp + accuracy_agedb) / 4
@@ -280,14 +260,9 @@ if __name__ == '__main__':
             best_acc = avg
             best_epoch = epoch + 1
 
-            if MULTI_GPU:
-                torch.save(BACKBONE.module.state_dict(), os.path.join(best_checkpoint_dir, "Backbone_Best.pth"))
-                torch.save(OPTIMIZER.module.state_dict(), os.path.join(best_checkpoint_dir, "Optimizer_Best.pth"))
-                torch.save(HEAD.state_dict(), os.path.join(best_checkpoint_dir, "Head_Best.pth"))
-            else:
-                torch.save(BACKBONE.state_dict(), os.path.join(best_checkpoint_dir, "Backbone_Best.pth"))
-                torch.save(OPTIMIZER.state_dict(), os.path.join(best_checkpoint_dir, "Optimizer_Best.pth"))
-                torch.save(HEAD.state_dict(), os.path.join(best_checkpoint_dir, "Head_Best.pth"))
+            torch.save(BACKBONE.state_dict(), os.path.join(best_checkpoint_dir, "Backbone_Best.pth"))
+            torch.save(OPTIMIZER.state_dict(), os.path.join(best_checkpoint_dir, "Optimizer_Best.pth"))
+            torch.save(HEAD.state_dict(), os.path.join(best_checkpoint_dir, "Head_Best.pth"))
 
         
         print("Epoch {}/{}, Evaluation: LFW Acc: {:.4f}, CFP_FF Acc: {:.4f}, CFP_FP Acc: {:.4f}, AgeDB Acc: {:.4f}, Avg Acc: {:.4f}\n".format(epoch + 1, NUM_EPOCH, accuracy_lfw, accuracy_cfp_ff, accuracy_cfp_fp, accuracy_agedb, avg ))
@@ -306,12 +281,7 @@ if __name__ == '__main__':
         
 
         # save checkpoints per epoch
-        if MULTI_GPU:
-            torch.save(BACKBONE.module.state_dict(), os.path.join(checkpoint_dir, "Backbone_Epoch_{}_Batch_{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
-            torch.save(OPTIMIZER.module.state_dict(), os.path.join(checkpoint_dir, "Optimizer_Epoch{}_Batch{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
-            torch.save(HEAD.state_dict(), os.path.join(checkpoint_dir, "Head_Epoch_{}_Batch_{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
-        else:
-            torch.save(BACKBONE.state_dict(), os.path.join(checkpoint_dir, "Backbone_Epoch_{}_Batch_{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
-            torch.save(OPTIMIZER.state_dict(), os.path.join(checkpoint_dir, "Optimizer_Epoch{}_Batch{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
-            torch.save(HEAD.state_dict(), os.path.join(checkpoint_dir, "Head_Epoch_{}_Batch_{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
+        torch.save(BACKBONE.state_dict(), os.path.join(checkpoint_dir, "Backbone_Epoch_{}_Batch_{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
+        torch.save(OPTIMIZER.state_dict(), os.path.join(checkpoint_dir, "Optimizer_Epoch{}_Batch{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
+        torch.save(HEAD.state_dict(), os.path.join(checkpoint_dir, "Head_Epoch_{}_Batch_{}.pth".format(epoch + 1, batch, LR_TRAIN, LR_SCALE)))
         

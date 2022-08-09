@@ -9,9 +9,9 @@ def parse_training_args(parser):
     parser.add_argument('--seed', type=int, default=1337,
                         help='seed number')
 
-    parser.add_argument('--gpu_num', type=list, action = 'store', default=[0],
-                        help='GPU number to use')
-
+    parser.add_argument('--gpu_num', type=int, default=0,
+                        help='gpu number')
+                        
     # parser.add_argument('--multi_gpu', type=str2bool, default=False,
     #                     help='Use Multi-GPU')
 

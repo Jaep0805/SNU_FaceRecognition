@@ -197,15 +197,12 @@ def gen_plot(fpr, tpr):  ##
     return buf
 
 
-def perform_val(multi_gpu, device, embedding_size, batch_size, backbone, carray, issame, LR_EVAL, nrof_folds = 10): ##
+def perform_val(device, embedding_size, batch_size, backbone, carray, issame, LR_EVAL, nrof_folds = 10): ##
 
     # nrof_fold : ---
 
-    if multi_gpu:
-        backbone = backbone.module # unpackage model from DataParallel
-        backbone = backbone.to(device)
-    else:
-        backbone = backbone.to(device)
+
+    backbone = backbone.to(device)
     backbone.eval() # switch to evaluation mode
 
     start = time.time()
@@ -246,13 +243,9 @@ def perform_val(multi_gpu, device, embedding_size, batch_size, backbone, carray,
     return accuracy.mean(), best_thresholds.mean(), roc_curve_tensor
 
 # SR 추가
-def perform_val_sr(multi_gpu, device, embedding_size, batch_size, backbone, carray, issame, LR_EVAL, sr_module, nrof_folds = 10, tta = True): ##
-    if multi_gpu:
-        backbone = backbone.module # unpackage model from DataParallel
-        backbone = backbone.to(device)
-    else:
-        backbone = backbone.to(device)
-        sr_module = sr_module.to(device)
+def perform_val_sr(device, embedding_size, batch_size, backbone, carray, issame, LR_EVAL, sr_module, nrof_folds = 10, tta = True): ##
+    backbone = backbone.to(device)
+    sr_module = sr_module.to(device)
     backbone.eval() # switch to evaluation mode
     sr_module.eval()
 

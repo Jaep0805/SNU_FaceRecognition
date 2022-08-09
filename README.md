@@ -129,7 +129,7 @@ https://drive.google.com/drive/folders/1mFQk2hzT32d1JRk7bOHgm1mnXoN6QClB?usp=sha
 ## === 학습된 ckpt ===
 
 혹은 아래 링크에서 미리 학습한 ckpt 파일을 다운 받아 checkpoints 폴더 안에 배치한 이후
-argument로 --resume_dir을 지정해주어 validation을 진행한다
+argument로 --load_dir을 지정해주어 validation을 진행한다
 
 구글 드라이브 주소 : 
 https://drive.google.com/drive/folders/1LSqIi5azx6rp2QAvIiK3T1Nc3ElaJuB2?usp=sharing
@@ -138,15 +138,13 @@ https://drive.google.com/drive/folders/1LSqIi5azx6rp2QAvIiK3T1Nc3ElaJuB2?usp=sha
 
 학습한 checkpoint를 validation데이터셋(CFP, LFW, AgeDB)에 대해 validation진행한다
 
-      EX. python validation.py --gpu_num=[0,1] --resume_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-28-19-15"
-   
-   따로 resume_dir을 지정해주지않으면 checkpoints_best안에 있는 제일 최근 checkpoint 폴더로 validation이 진행된다.
-   
+      EX. python validation.py --gpu_num=[0,1] --load_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-28-19-15"
+      
    추가적으로 LR, SR argument를 줄 수 있다\
    Validation dataset의 LR버전에 대한 validation결과를 보고싶다면 --LR_eval=True\
    LR버전의 Validation dataset의 Super Resolution한 이미지들에 대한 결과를 보고싶다면 --SR_eval=True
 
-      EX. python validation.py --gpu_num=[0,1] --resume_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-2434-19-15" --LR_eval=True --SR_eval=True
+      EX. python validation.py --gpu_num=[0,1] --load_dir = "/data/parkjun210/Final_Detect_Recog/Code_face_recog/checkpoints_best/HRTRAIN_2022-07-2434-19-15" --LR_eval=True --SR_eval=True
 
 ### 3) 결과
    결과는 아래와 같이 각 Validation 데이터셋에 대한 결과와
